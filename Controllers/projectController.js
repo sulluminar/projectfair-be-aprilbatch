@@ -46,8 +46,30 @@ exports.getHomeProject = async (req, res) => {
 }
 // 2) get all projects 
 exports.getAllProject = async (req, res) => {
+    const searchKey = req.query.search;
+    console.log(searchKey)
+    const searchQuery = {
+        // language:{
+        //     // i is used to remove case sensitivity 
+        //     $regex:searchKey,$options:'i'
+        // }
+        $or: [
+            {
+                language: {
+                    $regex: searchKey, 
+                    $options: 'i' // Case-insensitive search for language
+                }
+            },
+            {
+                title: {
+                    $regex: searchKey, 
+                    $options: 'i' // Case-insensitive search for title
+                }
+            }
+        ]
+    }
     try {
-        const allProject = await projects.find();
+        const allProject = await projects.find(searchQuery);
         res.status(200).json(allProject)
     }
     catch (err) {
