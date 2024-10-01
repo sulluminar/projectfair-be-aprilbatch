@@ -56,13 +56,13 @@ exports.getAllProject = async (req, res) => {
         $or: [
             {
                 language: {
-                    $regex: searchKey, 
+                    $regex: searchKey,
                     $options: 'i' // Case-insensitive search for language
                 }
             },
             {
                 title: {
-                    $regex: searchKey, 
+                    $regex: searchKey,
                     $options: 'i' // Case-insensitive search for title
                 }
             }
@@ -86,5 +86,35 @@ exports.getUserProject = async (req, res) => {
     catch (err) {
         res.send(401).json("Request failed due to:", err)
     }
+}
+
+exports.editUserProject = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.payload;
+    const { title, language, github, website, overview, projectImage } = req.body;
+    const uploadedProjectImage = req.file ? req.file.filename : projectImage;
+    try {
+        const updateProject = await projects.findByIdAndUpdate(
+            { _id: id }, {
+            title: title,
+            language: language,
+            github: github,
+            website: website,
+            overview: overview,
+            projectImage: uploadedProjectImage,
+            userId: userId
+        },
+            {
+                new: true,
+            }
+        );
+        await updateProject.save();
+        res.status(200).json(updateProject)
+    }
+    catch(error){
+        res.status(401).json(error)
+    }
+
+
 }
 
