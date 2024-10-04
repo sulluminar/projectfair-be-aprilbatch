@@ -88,6 +88,7 @@ exports.getUserProject = async (req, res) => {
     }
 }
 
+//4 edit user project
 exports.editUserProject = async (req, res) => {
     const { id } = req.params;
     const userId = req.payload;
@@ -111,10 +112,25 @@ exports.editUserProject = async (req, res) => {
         await updateProject.save();
         res.status(200).json(updateProject)
     }
-    catch(error){
+    catch (error) {
         res.status(401).json(error)
     }
 
 
 }
+
+//5 delete a project
+exports.deleteUserProject = async (req, res) => {
+    console.log("Inside delete controller")
+    const { id } = req.params;
+    console.log(id)
+    try {
+        const removedProject = await projects.findByIdAndDelete({_id:id});
+        res.status(200).json(removedProject)
+    }
+    catch (err) {
+        res.status(401).json(err)
+    }
+}
+
 
